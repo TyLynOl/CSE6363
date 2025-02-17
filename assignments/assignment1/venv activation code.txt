@@ -1,0 +1,4 @@
+Enter this into the terminal each time it
+restarts to activate the virtual environment:
+
+source myenv/bin/activate

@@ -2,34 +2,53 @@ import numpy as np
 import matplotlib.pyplot as plt
 from LinearRegression import LinearRegression
 
-# Generate synthetic data
-np.random.seed(42)
-X = 2 * np.random.rand(100, 1)  # 100 samples, 1 feature
-y = 4 + 3 * X + np.random.randn(100, 1)  # Linear relationship with noise
+# Generate synthetic dataset
+np.random.seed()
+X_train = 2 * np.random.rand(100, 1)
+y_train = 4 + 3 * X_train + np.random.randn(100, 1)  # Linear relation with some noise
 
-# Split into training and validation sets
-split_index = int(0.9 * len(X))
-X_train, X_val = X[:split_index], X[split_index:]
-y_train, y_val = y[:split_index], y[split_index:]
-
-# Initialize and train the model
+# Instantiate and train the model
 model = LinearRegression()
-model.fit(X_train, y_train, batch_size=16, regularization=0.1, max_epochs=500, patience=10)
+model.fit(X_train, y_train)
 
-# Make predictions
-train_predictions = model.predict(X_train)
-val_predictions = model.predict(X_val)
+# Generate new test data
+X_test = np.array([[0], [1], [2]])  # Simple input values
+y_test = 4 + 3 * X_test
+y_pred = model.predict(X_test)  # Get predictions
 
-# Plot results
-plt.scatter(X_train, y_train, color='blue', label='Train Data')
-plt.scatter(X_val, y_val, color='red', label='Validation Data')
-plt.plot(X_train, train_predictions, color='black', linewidth=2, label='Model Prediction')
-plt.xlabel("Feature X")
-plt.ylabel("Target y")
+# Print predictions
+print("Predictions for X_test:")
+for i in range(len(X_test)):
+    print(f"X = {X_test[i][0]:.2f}, Predicted y = {y_pred[i][0]:.2f}")
+
+# Plot predictions
+plt.scatter(X_train, y_train, color="blue", label="Training Data")
+plt.plot(X_test, y_pred, "r-", linewidth=2, label="Predictions")
+plt.xlabel("X")
+plt.ylabel("y")
 plt.legend()
-plt.title("Linear Regression Fit")
+plt.title("Linear Regression Predictions")
 plt.show()
 
 # Print final weights and bias
 print("Final Weights:", model.weights)
 print("Final Bias:", model.bias)
+
+# Evaluate model performance
+mse = model.score(X_train, y_train)
+print(f"Training MSE: {mse}")
+
+mse_val = model.score(X_test, y_test)
+print(f"Test MSE: {mse_val}")
+
+# Save model parameters
+model.save("linear_model.npz")
+
+# Load model parameters into a new instance
+new_model = LinearRegression()
+new_model.load("linear_model.npz")
+
+# Verify loaded parameters match original ones
+assert np.allclose(model.weights, new_model.weights), "Loaded weights do not match!"
+assert np.allclose(model.bias, new_model.bias), "Loaded bias does not match!"
+print("Model parameters successfully saved and loaded!")

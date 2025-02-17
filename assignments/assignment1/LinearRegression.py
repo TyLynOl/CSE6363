@@ -100,6 +100,9 @@ class LinearRegression:
                 error = y_batch - y_pred                            # error = (y - ^y^)
                 loss = np.mean(error**2)                            # loss = (1/N)*(error)*(error) , where N = size of subset
                 
+                # Track the loss each batch
+                train_losses.append(loss)                           # Stores the loss for this batch (batch = step)
+                
                 # Calculate the gradients using provided gradient formulas
                 dW = -2 * np.dot(X_batch.T, error) / X_batch.shape[0]   # Partial of L w.r.t W, use chain rule
                 db = -2 * np.mean(error)
@@ -114,9 +117,15 @@ class LinearRegression:
                 self.bias -= 0.01 * db                              # NOTE: alpha is assumed to be 0.01 here. Parameter can be passed / set in method header too.
                 
             # Calculate the training loss after each epoch
+            """
+            * Training Error was calculated after each epoch; homework instructed to calculate after each batch.
+            Moved the loss calculation inside the batch loop. *
+            ---------
             train_error = y_train - np.dot(X_train, self.weights) - self.bias
             train_loss = np.mean(train_error ** 2)
             train_losses.append(train_loss)
+            ---------
+            """
             
             # Calculate the validation loss after each epoch
             val_error = y_val - np.dot(X_val, self.weights) - self.bias
@@ -136,6 +145,7 @@ class LinearRegression:
                 
             if epochs_without_improvement >= self.patience:
                 print(f"Early stopping triggered at epoch {epoch} after {self.patience} epochs of stagnation.")
+                break
 
             
         # Restore the best model parameters
@@ -157,9 +167,14 @@ class LinearRegression:
         ----------
         X: numpy.ndarray
             The input data.
+            
+        Returns
+        ----------
+        numpy.ndarray
+            The predicted values.
         """
         # TODO: Implement the prediction function.
-        pass
+        return np.dot(X, self.weights) + self.bias
 
     def score(self, X, y):
         """Evaluate the linear model using the mean squared error.
@@ -170,6 +185,39 @@ class LinearRegression:
             The input data.
         y: numpy.ndarray
             The target data.
+            
+        Returns
+        -------
+        float
+            The mean squared error (MSE).
         """
         # TODO: Implement the scoring function.
-        pass
+        y_prediction = self.predict(X)              # Compute predictions with test set
+        loss = np.mean((y - y_prediction) ** 2)     # Compute loss using the MSE
+        return loss
+    
+    def save(self, file_path):
+        """Saves the model's parameters to a file.
+        
+        Parameters
+        ----------
+        file_path : str
+            The file path where the model parameters will be saved.
+        """
+        
+        np.savez(file_path, weights=self.weights, bias=self.bias)
+        print(f"The model's parameters have been saved to {file_path}.")
+        
+    def load(self, file_path):
+        """Loads the model's parameters from a file.
+        
+        Parameters
+        ----------
+        file_path : str
+            The file path where the model parameters will be saved.
+        """
+        
+        data = np.load(file_path)
+        self.weights = data["weights"]
+        self.bias = data["bias"]
+        print(f"The model's parameters have been loaded from {file_path}.")
