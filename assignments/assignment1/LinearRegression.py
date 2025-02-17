@@ -1,5 +1,4 @@
 # Ty Buchanan - CSE 6363 Assignment 1
-# Import numpy for array operations
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -51,11 +50,12 @@ class LinearRegression:
         
         # N should be the number of samples, D should be the number of features.
         N, D = X.shape                  # X.shape[0] = number of data samples; X.shape[1] = number of features
+        M = y.shape[1]                  # y.shape[0] = number of data samples; y.shape[1] = number of targets
         
         # Initialize the weights and biases of the instance of the class (i.e. use 'self').
         # Initialize the weights from a random distribution (0,1), and scale down to prevent large gradients. 
-        self.weights = np.random.randn(D, 1)*0.01
-        self.bias = np.zeros((1,))
+        self.weights = np.random.randn(D, M)*0.01
+        self.bias = np.zeros((1,M))
 
         # TODO: Implement the training loop.
         # First, ensure that the dataset is randomly shuffled prior to assigning the training and validation sets. Use the homework specified split.
@@ -105,7 +105,7 @@ class LinearRegression:
                 
                 # Calculate the gradients using provided gradient formulas
                 dW = -2 * np.dot(X_batch.T, error) / X_batch.shape[0]   # Partial of L w.r.t W, use chain rule
-                db = -2 * np.mean(error)
+                db = -2 * np.mean(error, axis=0, keepdims=True)         # Produces a (1 x M) output vector (M = number of targets)
              
                 ## APPLICATION OF L2 REGULARIZATION WHEN NECESSARY ##
                 if self.regularization > 0:
@@ -153,12 +153,21 @@ class LinearRegression:
         self.bias = best_bias
         
         # Plot the training and validation loss curves
+        """
+        * Plotted the training and validation losses after each epoch.
+        Homework instructed to have these graphs reported in separate python files
+        according to the custom input-output combination of Iris data trained. *
+        ----------
         plt.plot(train_losses, label="Training Loss")
         plt.plot(val_losses, label="Validation Loss")
         plt.xlabel("Epochs")
         plt.ylabel("Loss")
         plt.legend()
-        plt.show()              
+        plt.show()  
+        ----------
+        """
+        
+        return train_losses            
         
     def predict(self, X):
         """Predict using the linear model.
