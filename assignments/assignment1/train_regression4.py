@@ -6,7 +6,7 @@ from LinearRegression import LinearRegression
 data = np.load("iris_data.npz")
 X_train, y_train = data["X_train"], data["y_train"]
 
-# Extract features for Model 2 (Predict Petal Length using Sepal Width & Sepal Length)
+# Extract features for Model 4 (Predict Sepal Length using Petal Length and Petal Width)
 X_train = X_train[:, [2,3]]                         # Petal Length and Petal Width corresponds to columns 2 and 3 of original dataset
 y_train = data["X_train"][:, 0].reshape(-1, 1)      # Sepal Length corresponds to column 0 of original dataset
 
