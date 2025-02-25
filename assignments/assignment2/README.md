@@ -143,3 +143,7 @@ I only used the month, day, and hour of the pickup time and dropoff time as feat
 Create a zip file that includes all relevant code (or a single notebook if applicable).
 The TA should be able to easily run the code to reproduce all plots and results.
 Include any additional instructions, if necessary.
+
+## !!! Instructions by the Student !!! ##
+
+Ensure that the NYC taxi data is in the same folder as the code (as usual). Run the "taxi_predictions.py" file to load the data, train the model, and produce plots of various trained models with loss scores outputted to the terminal.
